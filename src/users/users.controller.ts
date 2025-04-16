@@ -1,19 +1,23 @@
-import { 
-  Controller, 
-  Get, 
-  Put, 
-  Post, 
-  Delete, 
-  Body, 
-  Param, 
-  UseGuards, 
-  HttpCode, 
-  HttpStatus 
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { UpdateUserDto, AddressDto, UpdateAddressDto } from './dto/user.dto';
+import {
+  UpdateUserDto,
+  CreateAddressDto,
+  UpdateAddressDto,
+} from './dto/user.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -94,7 +98,7 @@ export class UsersController {
   @Post('me/addresses')
   async addAddress(
     @CurrentUser('userId') userId: string,
-    @Body() addressDto: AddressDto,
+    @Body() addressDto: CreateAddressDto,
   ) {
     const address = await this.usersService.addAddress(userId, addressDto);
     return {
@@ -109,7 +113,11 @@ export class UsersController {
     @Param('addressId') addressId: string,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
-    const address = await this.usersService.updateAddress(userId, addressId, updateAddressDto);
+    const address = await this.usersService.updateAddress(
+      userId,
+      addressId,
+      updateAddressDto,
+    );
     return {
       success: true,
       data: address,

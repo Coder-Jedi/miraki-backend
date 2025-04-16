@@ -1,5 +1,12 @@
 import { IsString, IsNumber, IsNotEmpty, Min } from 'class-validator';
 
+export interface CartSummary {
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+}
+
 export class AddCartItemDto {
   @IsNotEmpty()
   @IsString()

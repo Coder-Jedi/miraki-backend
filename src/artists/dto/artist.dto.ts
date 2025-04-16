@@ -1,6 +1,24 @@
-import { IsString, IsNumber, IsOptional, ValidateNested, IsObject, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+  IsObject,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { LocationDto } from '../../artworks/dto/artwork.dto';
+
+// Export the AreaCount interface for use in controller
+export interface AreaCount {
+  name: string;
+  count: number;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
 
 export class SocialLinksDto {
   @IsOptional()
@@ -89,7 +107,7 @@ export class ArtistFilterDto {
   @IsOptional()
   @IsNumber()
   limit?: number = 20;
-  
+
   @IsOptional()
   @IsString()
   area?: string;
@@ -97,4 +115,16 @@ export class ArtistFilterDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
+  @IsString()
+  sortBy?: string = 'popularity';
+
+  @IsOptional()
+  @IsString()
+  sortOrder?: 'asc' | 'desc' = 'desc';
 }

@@ -13,7 +13,8 @@ import {
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { AddCartItemDto, UpdateCartItemDto } from './dto/cart.dto';
+import { AddCartItemDto, UpdateCartItemDto, CartSummary } from './dto/cart.dto';
+import { CartItem } from './schemas/cart.schema';
 
 @Controller('cart')
 @UseGuards(JwtAuthGuard)
@@ -21,7 +22,13 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Get()
-  async getCart(@CurrentUser('userId') userId: string) {
+  async getCart(@CurrentUser('userId') userId: string): Promise<{
+    success: boolean;
+    data: {
+      items: CartItem[];
+      summary: CartSummary;
+    };
+  }> {
     const cart = await this.cartService.getCart(userId);
     return {
       success: true,
@@ -33,7 +40,15 @@ export class CartController {
   async addItem(
     @CurrentUser('userId') userId: string,
     @Body() addCartItemDto: AddCartItemDto,
-  ) {
+  ): Promise<{
+    success: boolean;
+    data: {
+      item: CartItem;
+      cart: {
+        summary: CartSummary;
+      };
+    };
+  }> {
     const result = await this.cartService.addItem(userId, addCartItemDto);
     return {
       success: true,
@@ -46,8 +61,18 @@ export class CartController {
     @CurrentUser('userId') userId: string,
     @Param('itemId') itemId: string,
     @Body() updateCartItemDto: UpdateCartItemDto,
-  ) {
-    const result = await this.cartService.updateItem(userId, itemId, updateCartItemDto);
+  ): Promise<{
+    success: boolean;
+    data: {
+      items: CartItem[];
+      summary: CartSummary;
+    };
+  }> {
+    const result = await this.cartService.updateItem(
+      userId,
+      itemId,
+      updateCartItemDto,
+    );
     return {
       success: true,
       data: result,
@@ -58,7 +83,13 @@ export class CartController {
   async removeItem(
     @CurrentUser('userId') userId: string,
     @Param('itemId') itemId: string,
-  ) {
+  ): Promise<{
+    success: boolean;
+    data: {
+      items: CartItem[];
+      summary: CartSummary;
+    };
+  }> {
     const result = await this.cartService.removeItem(userId, itemId);
     return {
       success: true,
@@ -68,7 +99,14 @@ export class CartController {
 
   @Delete()
   @HttpCode(HttpStatus.OK)
-  async clearCart(@CurrentUser('userId') userId: string) {
+  async clearCart(@CurrentUser('userId') userId: string): Promise<{
+    success: boolean;
+    message: string;
+    data: {
+      items: [];
+      summary: CartSummary;
+    };
+  }> {
     await this.cartService.clearCart(userId);
     return {
       success: true,

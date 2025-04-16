@@ -10,7 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
-import { CreateArtistDto, UpdateArtistDto, ArtistFilterDto } from './dto/artist.dto';
+import {
+  CreateArtistDto,
+  UpdateArtistDto,
+  ArtistFilterDto,
+  AreaCount,
+} from './dto/artist.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -46,7 +51,10 @@ export class ArtistsController {
   }
 
   @Get('by-area')
-  async getArtistsByArea() {
+  async getArtistsByArea(): Promise<{
+    success: boolean;
+    data: { areas: AreaCount[] };
+  }> {
     const areas = await this.artistsService.getArtistsByArea();
     return {
       success: true,

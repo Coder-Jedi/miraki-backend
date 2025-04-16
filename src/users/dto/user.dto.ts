@@ -1,6 +1,14 @@
-import { IsString, IsOptional, IsEmail, IsBoolean, IsEnum, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsBoolean,
+  IsEnum,
+} from 'class-validator';
 import { AddressType } from '../../common/interfaces/common.interface';
+
+// AddressDto is an alias for CreateAddressDto
+export { CreateAddressDto as AddressDto };
 
 export class CreateAddressDto {
   @IsEnum(AddressType)
