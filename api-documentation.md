@@ -157,7 +157,7 @@ This document outlines the API endpoints and data structures for the Miraki Arti
   - `category`: Filter by artwork category
   - `minPrice`: Minimum price
   - `maxPrice`: Maximum price
-  - `location`: Filter by location area
+  - `location`: Filter by location area (accepts values from the Area enum)
   - `featured`: Filter featured artworks (true/false)
   - `forSale`: Filter artworks for sale (true/false)
   - `search`: Search term for title, artist, or description
@@ -168,7 +168,7 @@ This document outlines the API endpoints and data structures for the Miraki Arti
 {
   "success": true,
   "data": {
-    "artworks": [
+    "items": [
       {
         "id": "artwork123",
         "title": "Urban Serenity",
@@ -179,7 +179,6 @@ This document outlines the API endpoints and data structures for the Miraki Arti
         "location": {
           "lat": 19.0760,
           "lng": 72.8777,
-          "address": "Downtown Art District",
           "area": "Kala Ghoda"
         },
         "price": 750,
@@ -195,6 +194,60 @@ This document outlines the API endpoints and data structures for the Miraki Arti
       "page": 1,
       "limit": 20,
       "pages": 13
+    }
+  }
+}
+```
+
+### Get Artworks by Artist ID
+
+- **URL**: `/artworks/artist/:artistId`
+- **Method**: `GET`
+- **Description**: Get a paginated list of artworks created by a specific artist
+- **Query Parameters**:
+  - `page`: Page number (default: 1)
+  - `limit`: Items per page (default: 20)
+  - `category`: Filter by artwork category
+  - `minPrice`: Minimum price
+  - `maxPrice`: Maximum price
+  - `location`: Filter by location area
+  - `featured`: Filter featured artworks (true/false)
+  - `forSale`: Filter artworks for sale (true/false)
+  - `search`: Search term for title or description
+  - `sortBy`: Sort field (default: 'createdAt')
+  - `sortOrder`: Sort direction ('asc' or 'desc', default: 'desc')
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "year": 2023,
+        "medium": "Oil on Canvas",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "location": {
+          "lat": 19.0760,
+          "lng": 72.8777,
+          "area": "Kala Ghoda"
+        },
+        "price": 750,
+        "category": "Painting",
+        "description": "A contemplative piece exploring the contrast between urban architecture and natural elements.",
+        "likes": 124,
+        "featured": true,
+        "forSale": true
+      }
+      // Additional artwork objects
+    ],
+    "pagination": {
+      "total": 8,
+      "page": 1,
+      "limit": 20,
+      "pages": 1
     }
   }
 }
@@ -225,7 +278,6 @@ This document outlines the API endpoints and data structures for the Miraki Arti
     "location": {
       "lat": 19.0760,
       "lng": 72.8777,
-      "address": "Downtown Art District",
       "area": "Kala Ghoda"
     },
     "price": 750,
@@ -301,6 +353,36 @@ This document outlines the API endpoints and data structures for the Miraki Arti
 }
 ```
 
+### Artwork Areas
+
+- **URL**: `/artworks/areas`
+- **Method**: `GET`
+- **Description**: Get a list of all supported artwork areas in Mumbai
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "areas": [
+      "Bandra",
+      "Kala Ghoda",
+      "Colaba",
+      "Worli",
+      "Fort",
+      "Juhu",
+      "Andheri",
+      "Powai",
+      "Dadar",
+      "Lower Parel",
+      "Santacruz",
+      "Chembur",
+      "Versova",
+      "Other"
+    ]
+  }
+}
+```
+
 ## Artist Endpoints
 
 ### List Artists
@@ -320,26 +402,35 @@ This document outlines the API endpoints and data structures for the Miraki Arti
 {
   "success": true,
   "data": {
-    "artists": [
+    "items": [
       {
-        "id": "artist123",
+        "_id": "68017468bd6bcc4ba85e19d5",
         "name": "Eliza Chen",
         "bio": "Eliza is a contemporary painter whose work explores the intersection of nature and human emotion through vivid colors and bold strokes.",
         "profileImage": "https://storage.miraki-art.com/artists/eliza-chen.jpg",
         "location": {
           "lat": 19.0596,
           "lng": 72.8295,
-          "address": "Bandra, Mumbai",
           "area": "Bandra"
         },
-        "popularity": 4.8
+        "socialLinks": {
+          "website": "https://example.com/elizachen",
+          "instagram": "https://instagram.com/elizachenart",
+          "twitter": null,
+          "facebook": null
+        },
+        "popularity": 0,
+        "artworks": ["68017594bd6bcc4ba85e19d8", "68017594bd6bcc4ba85e19d9"],
+        "createdAt": "2025-04-17T21:36:40.737Z",
+        "updatedAt": "2025-04-17T21:36:40.737Z",
+        "__v": 0,
       }
     ],
     "pagination": {
-      "total": 65,
+      "total": 1,
       "page": 1,
       "limit": 20,
-      "pages": 4
+      "pages": 1
     }
   }
 }
@@ -355,14 +446,13 @@ This document outlines the API endpoints and data structures for the Miraki Arti
 {
   "success": true,
   "data": {
-    "id": "artist123",
+    "_id": "68017468bd6bcc4ba85e19d5",
     "name": "Eliza Chen",
     "bio": "Eliza is a contemporary painter whose work explores the intersection of nature and human emotion through vivid colors and bold strokes.",
     "profileImage": "https://storage.miraki-art.com/artists/eliza-chen.jpg",
     "location": {
       "lat": 19.0596,
       "lng": 72.8295,
-      "address": "Bandra, Mumbai",
       "area": "Bandra"
     },
     "socialLinks": {
@@ -371,10 +461,11 @@ This document outlines the API endpoints and data structures for the Miraki Arti
       "twitter": null,
       "facebook": null
     },
-    "popularity": 4.8,
-    "artworks": [
-      // Array of artwork objects by this artist
-    ]
+    "popularity": 0,
+    "artworks": ["68017594bd6bcc4ba85e19d8", "68017594bd6bcc4ba85e19d9"],
+    "createdAt": "2025-04-17T21:36:40.737Z",
+    "updatedAt": "2025-04-17T21:36:40.737Z",
+    "__v": 0,
   }
 }
 ```
@@ -426,6 +517,36 @@ This document outlines the API endpoints and data structures for the Miraki Arti
         }
       }
       // Additional areas
+    ]
+  }
+}
+```
+
+### Artists Areas
+
+- **URL**: `/artists/areas`
+- **Method**: `GET`
+- **Description**: Get a list of all supported artist areas in Mumbai
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "areas": [
+      "Bandra",
+      "Kala Ghoda",
+      "Colaba",
+      "Worli",
+      "Fort",
+      "Juhu",
+      "Andheri",
+      "Powai",
+      "Dadar",
+      "Lower Parel",
+      "Santacruz",
+      "Chembur",
+      "Versova",
+      "Other"
     ]
   }
 }
@@ -861,7 +982,6 @@ This document outlines the API endpoints and data structures for the Miraki Arti
   "location": {
     "lat": 19.0760,
     "lng": 72.8777,
-    "address": "Gallery Address",
     "area": "Kala Ghoda"
   },
   "forSale": true,
@@ -879,11 +999,11 @@ This document outlines the API endpoints and data structures for the Miraki Arti
 - **Update**: `PUT /admin/artists/:id` - Update artist
 - **Delete**: `DELETE /admin/artists/:id` - Delete artist
 
-#### Create Artist (Example)
+#### Create Artist
 
 - **URL**: `/admin/artists`
 - **Method**: `POST`
-- **Description**: Create a new artist
+- **Description**: Create a new artist profile
 - **Authentication**: Required (Admin role)
 - **Request Body** (multipart/form-data):
 ```json
@@ -893,325 +1013,8897 @@ This document outlines the API endpoints and data structures for the Miraki Arti
   "location": {
     "lat": 19.0596,
     "lng": 72.8295,
-    "address": "Bandra, Mumbai",
     "area": "Bandra"
   },
   "socialLinks": {
     "website": "https://artistwebsite.com",
-    "instagram": "https://instagram.com/artistname"
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
   },
-  "profileImage": "artist-profile.jpg" // Image file
+  "profileImage": "[file]" // Image file upload
 }
 ```
-- **Response**: Created artist object
-
-### Order Management
-
-- **List**: `GET /admin/orders` - Paginated list with filters
-- **Get**: `GET /admin/orders/:id` - Get order details
-- **Update Status**: `PUT /admin/orders/:id/status` - Update order status
-- **Update Payment Status**: `PUT /admin/orders/:id/payment` - Update payment status
-- **Delete**: `DELETE /admin/orders/:id` - Delete order (soft delete)
-
-### User Management
-
-- **List**: `GET /admin/users` - Paginated list with filters
-- **Get**: `GET /admin/users/:id` - Get user details
-- **Update**: `PUT /admin/users/:id` - Update user information
-- **Delete**: `DELETE /admin/users/:id` - Delete user (soft delete)
-- **Reset Password**: `POST /admin/users/:id/reset-password` - Force password reset
-
-### Content Management
-
-- **Banners**: `GET/POST/PUT/DELETE /admin/content/banners` - Manage homepage banners
-- **Featured Collections**: `GET/POST/PUT/DELETE /admin/content/collections` - Manage curated collections
-- **Site Settings**: `GET/PUT /admin/content/settings` - Manage site settings
-- **Navigation Links**: `GET/POST/PUT/DELETE /admin/content/navigation` - Manage navigation items
-
-### Bulk Operations
-
-- **Bulk Delete Artworks**: `DELETE /admin/artworks/bulk` - Delete multiple artworks
-- **Bulk Update Featured**: `PUT /admin/artworks/bulk/featured` - Update featured status for multiple artworks
-- **Bulk Import Artworks**: `POST /admin/artworks/import` - Import artworks from CSV/Excel
-
-## Data Structures
-
-### Artwork
-
-```typescript
-interface Artwork {
-  id: string;
-  title: string;
-  artist: string;  // Artist's name
-  artistId: string;  // Reference to Artist object
-  year: number;
-  medium: string;
-  image: string;  // Main image URL
-  additionalImages?: string[];  // Additional image URLs
-  location: {
-    lat: number;
-    lng: number;
-    address: string;
-    area?: string;
-  };
-  price?: number;
-  category: ArtworkCategory;
-  description: string;
-  likes: number;
-  featured?: boolean;
-  forSale?: boolean;
-  createdAt?: string;
-  dimensions?: string;
-}
-
-type ArtworkCategory = 
-  | "All" 
-  | "Painting" 
-  | "Sculpture" 
-  | "Photography" 
-  | "Digital" 
-  | "Digital Art"
-  | "Mixed Media" 
-  | "Ceramics" 
-  | "Illustration" 
-  | "Other";
-```
-
-### Artist
-
-```typescript
-interface Artist {
-  id: string;
-  name: string;
-  bio?: string;
-  location?: {
-    lat: number;
-    lng: number;
-    address: string;
-    area?: string;
-  };
-  profileImage?: string;
-  socialLinks?: {
-    website?: string;
-    instagram?: string;
-    twitter?: string;
-    facebook?: string;
-  };
-  popularity?: number;
-  artworks?: Artwork[];
-}
-```
-
-### User
-
-```typescript
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  profileImage?: string;
-  role: "user" | "admin" | "artist";
-  createdAt: string;
-  lastLogin?: string;
-  favorites?: string[];  // Array of artwork IDs
-  addresses?: Address[];
-}
-
-interface Address {
-  id: string;
-  type: "home" | "office" | "other";
-  name: string;
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  phone?: string;
-  isDefault: boolean;
-}
-```
-
-### Cart & Orders
-
-```typescript
-interface CartItem {
-  id: string;
-  artworkId: string;
-  artwork: {
-    id: string;
-    title: string;
-    artist: string;
-    image: string;
-    price: number;
-  };
-  quantity: number;
-  addedAt: string;
-}
-
-interface Cart {
-  userId: string;
-  items: CartItem[];
-  summary: {
-    subtotal: number;
-    shipping: number;
-    tax: number;
-    total: number;
-  };
-}
-
-interface Order {
-  id: string;
-  userId: string;
-  items: {
-    artwork: {
-      id: string;
-      title: string;
-      artist: string;
-      image: string;
-    };
-    quantity: number;
-    price: number;
-  }[];
-  shippingAddress: Address;
-  paymentMethod: "card" | "netbanking" | "upi" | "cod";
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  trackingInfo?: {
-    carrier: string;
-    trackingNumber: string;
-    trackingUrl?: string;
-  };
-  summary: {
-    subtotal: number;
-    shipping: number;
-    tax: number;
-    total: number;
-  };
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-```
-
-### Admin Content
-
-```typescript
-interface Banner {
-  id: string;
-  title: string;
-  subtitle?: string;
-  image: string;
-  link?: string;
-  active: boolean;
-  priority: number;  // For ordering
-  startDate?: string;  // For scheduled banners
-  endDate?: string;
-  createdAt: string;
-}
-
-interface Collection {
-  id: string;
-  title: string;
-  description?: string;
-  coverImage: string;
-  artworks: string[];  // Array of artwork IDs
-  featured: boolean;
-  priority: number;
-  createdAt: string;
-}
-
-interface SiteSettings {
-  siteName: string;
-  logo: string;
-  contactEmail: string;
-  contactPhone?: string;
-  socialLinks: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-  };
-  footerText: string;
-  metaDescription: string;
-  termsUrl?: string;
-  privacyUrl?: string;
-  shippingInfo?: string;
-  returnPolicy?: string;
-}
-```
-
-## File Upload Endpoints
-
-### Upload Artwork Image
-
-- **URL**: `/admin/upload/artwork`
-- **Method**: `POST`
-- **Description**: Upload an artwork image
-- **Authentication**: Required (Admin role)
-- **Request Body** (multipart/form-data):
-  - `image`: Image file (JPEG/PNG/WebP)
-  - `artworkId`: Optional artwork ID to associate with
 - **Response**:
 ```json
 {
   "success": true,
   "data": {
-    "url": "https://storage.miraki-art.com/artworks/filename.jpg",
-    "key": "artworks/filename.jpg"
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
   }
 }
 ```
 
-### Upload Artist Image
+#### Update Artist
 
-- **URL**: `/admin/upload/artist`
-- **Method**: `POST`
-- **Description**: Upload an artist profile image
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
 - **Authentication**: Required (Admin role)
 - **Request Body** (multipart/form-data):
-  - `image`: Image file
-  - `artistId`: Optional artist ID to associate with
-- **Response**: URL and key of uploaded image
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
 
-### Upload Banner Image
+#### Get Artist Details (Admin)
 
-- **URL**: `/admin/upload/banner`
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
 - **Method**: `POST`
-- **Description**: Upload a banner image
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
 - **Authentication**: Required (Admin role)
 - **Request Body** (multipart/form-data):
-  - `image`: Image file
-- **Response**: URL and key of uploaded image
-
-## Rate Limiting
-
-API rate limiting is implemented to prevent abuse:
-
-- Unauthenticated requests: 60 requests per minute
-- Authenticated user requests: 120 requests per minute
-- Admin requests: 300 requests per minute
-
-Rate limit headers are included in API responses:
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
 ```
-X-RateLimit-Limit: 60
-X-RateLimit-Remaining: 58
-X-RateLimit-Reset: 1631234567
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
 ```
 
-## Error Codes
+#### Update Artist
 
-Common error codes returned by the API:
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
 
-- `AUTH_REQUIRED`: Authentication required
-- `INVALID_CREDENTIALS`: Invalid login credentials
-- `ACCESS_DENIED`: User doesn't have permission
-- `RESOURCE_NOT_FOUND`: Requested resource not found
-- `VALIDATION_ERROR`: Invalid input data
-- `DUPLICATE_ENTRY`: Resource already exists
-- `PAYMENT_FAILED`: Payment processing failed
-- `RATE_LIMIT_EXCEEDED`: Too many requests
-- `INTERNAL_ERROR`: Internal server error
+#### Get Artist Details (Admin)
 
-## Versioning
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
 
-The API version is included in the URL path (e.g., `/v1/artworks`). When breaking changes are introduced, a new API version will be released (e.g., `/v2/artworks`) while maintaining the previous version for backward compatibility.
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+-```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      //```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user```json
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`
+- **Description**: Delete an artist profile (this will not delete associated artworks)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artist successfully deleted"
+}
+```
+
+## User Endpoints
+
+### Get User Profile
+
+- **URL**: `/users/me`
+- **Method**: `GET`
+- **Description**: Get the current user's profile
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "User Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "createdAt": "2023-01-15T10:30:00Z"
+  }
+}
+```
+
+### Update User Profile
+
+- **URL**: `/users/me`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "profileImage": "base64-encoded-image-data"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user123",
+    "name": "Updated Name",
+    "email": "user@example.com",
+    "profileImage": "https://storage.miraki-art.com/users/user123.jpg",
+    "updatedAt": "2023-09-15T14:22:10Z"
+  }
+}
+```
+
+### Get User Favorites
+
+- **URL**: `/users/me/favorites`
+- **Method**: `GET`
+- **Description**: Get the current user's favorite artworks
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "favorites": [
+      // Array of artwork objects the user has favorited
+    ],
+    "count": 12
+  }
+}
+```
+
+### Add to Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `POST`
+- **Description**: Add an artwork to user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork added to favorites"
+}
+```
+
+### Remove from Favorites
+
+- **URL**: `/users/me/favorites/:artworkId`
+- **Method**: `DELETE`
+- **Description**: Remove an artwork from user's favorites
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "message": "Artwork removed from favorites"
+}
+```
+
+### User Addresses
+
+- **URL**: `/users/me/addresses`
+- **Method**: `GET`
+- **Description**: Get the current user's saved addresses
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "addresses": [
+      {
+        "id": "addr123",
+        "type": "home",
+        "name": "Home Address",
+        "line1": "123 Main St",
+        "line2": "Apt 4B",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "postalCode": "400001",
+        "country": "India",
+        "phone": "+919876543210",
+        "isDefault": true
+      }
+    ]
+  }
+}
+```
+
+### Add User Address
+
+- **URL**: `/users/me/addresses`
+- **Method**: `POST`
+- **Description**: Add a new address for the user
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "type": "office",
+  "name": "Office Address",
+  "line1": "456 Work Blvd",
+  "line2": "Floor 3",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "postalCode": "400002",
+  "country": "India",
+  "phone": "+919876543211",
+  "isDefault": false
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "addr124",
+    "type": "office",
+    "name": "Office Address",
+    // Other address fields...
+    "createdAt": "2023-09-15T15:30:00Z"
+  }
+}
+```
+
+### Update User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `PUT`
+- **Authentication**: Required
+- **Request Body**: Updated address fields
+- **Response**: Updated address object
+
+### Delete User Address
+
+- **URL**: `/users/me/addresses/:addressId`
+- **Method**: `DELETE`
+- **Authentication**: Required
+- **Response**: Success confirmation message
+
+## E-commerce Endpoints
+
+### Get Cart
+
+- **URL**: `/cart`
+- **Method**: `GET`
+- **Description**: Get the current user's shopping cart
+- **Authentication**: Required
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "cartitem123",
+        "artwork": {
+          "id": "artwork123",
+          "title": "Urban Serenity",
+          "artist": "Eliza Chen",
+          "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+          "price": 750
+        },
+        "quantity": 1,
+        "addedAt": "2023-09-15T10:30:00Z"
+      }
+    ],
+    "summary": {
+      "subtotal": 750,
+      "shipping": 50,
+      "tax": 80,
+      "total": 880
+    }
+  }
+}
+```
+
+### Add to Cart
+
+- **URL**: `/cart/items`
+- **Method**: `POST`
+- **Description**: Add an artwork to the shopping cart
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "artworkId": "artwork123",
+  "quantity": 1
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "item": {
+      "id": "cartitem123",
+      "artwork": {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "artist": "Eliza Chen",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "price": 750
+      },
+      "quantity": 1,
+      "addedAt": "2023-09-15T10:30:00Z"
+    },
+    "cart": {
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      }
+    }
+  }
+}
+```
+
+### Update Cart Item
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `PUT`
+- **Description**: Update the quantity of a cart item
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "quantity": 2
+}
+```
+- **Response**: Updated cart with summary information
+
+### Remove from Cart
+
+- **URL**: `/cart/items/:itemId`
+- **Method**: `DELETE`
+- **Description**: Remove an item from the cart
+- **Authentication**: Required
+- **Response**: Updated cart with summary information
+
+### Clear Cart
+
+- **URL**: `/cart`
+- **Method**: `DELETE`
+- **Description**: Remove all items from the cart
+- **Authentication**: Required
+- **Response**: Empty cart confirmation
+
+### Create Order
+
+- **URL**: `/orders`
+- **Method**: `POST`
+- **Description**: Create a new order from cart items
+- **Authentication**: Required
+- **Request Body**:
+```json
+{
+  "shippingAddressId": "addr123",
+  "paymentMethod": "card",
+  "paymentDetails": {
+    "cardToken": "payment-gateway-token",
+    "savePaymentMethod": false
+  },
+  "notes": "Please deliver on weekday mornings"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "order": {
+      "id": "order123",
+      "items": [
+        {
+          "artwork": {
+            "id": "artwork123",
+            "title": "Urban Serenity",
+            "artist": "Eliza Chen",
+            "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg"
+          },
+          "quantity": 1,
+          "price": 750
+        }
+      ],
+      "shippingAddress": {
+        "id": "addr123",
+        "name": "Home Address",
+        // Address details...
+      },
+      "paymentMethod": "card",
+      "status": "processing",
+      "paymentStatus": "paid",
+      "summary": {
+        "subtotal": 750,
+        "shipping": 50,
+        "tax": 80,
+        "total": 880
+      },
+      "createdAt": "2023-09-15T16:45:30Z"
+    }
+  }
+}
+```
+
+### Get Order Details
+
+- **URL**: `/orders/:id`
+- **Method**: `GET`
+- **Description**: Get details of a specific order
+- **Authentication**: Required
+- **Response**: Order object with details
+
+### List User Orders
+
+- **URL**: `/orders`
+- **Method**: `GET`
+- **Description**: Get a list of all orders placed by the user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `page`: Page number
+  - `limit`: Items per page
+  - `status`: Filter by order status
+- **Response**: Paginated list of order objects
+
+## Admin Endpoints
+
+### Dashboard Statistics
+
+- **URL**: `/admin/dashboard`
+- **Method**: `GET`
+- **Description**: Get statistics for the admin dashboard
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "totalSales": 12500,
+    "totalOrders": 45,
+    "totalArtworks": 340,
+    "totalArtists": 28,
+    "recentOrders": [
+      // List of recent orders with basic information
+    ],
+    "salesByCategory": [
+      {
+        "category": "Painting",
+        "sales": 6500,
+        "count": 23
+      },
+      // Other categories
+    ],
+    "salesByMonth": [
+      {
+        "month": "Jan",
+        "sales": 1200
+      },
+      // Other months
+    ]
+  }
+}
+```
+
+### Artwork Management (CRUD)
+
+- **List**: `GET /admin/artworks` - Paginated list with filters
+- **Create**: `POST /admin/artworks` - Create new artwork
+- **Get**: `GET /admin/artworks/:id` - Get artwork details
+- **Update**: `PUT /admin/artworks/:id` - Update artwork
+- **Delete**: `DELETE /admin/artworks/:id` - Delete artwork
+- **Toggle Featured**: `PUT /admin/artworks/:id/toggle-featured` - Toggle featured status
+
+#### Create Artwork (Example)
+
+- **URL**: `/admin/artworks`
+- **Method**: `POST`
+- **Description**: Create a new artwork
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "title": "New Artwork Title",
+  "artistId": "artist123",
+  "year": 2023,
+  "medium": "Oil on Canvas",
+  "dimensions": "30\" x 40\"",
+  "price": 950,
+  "category": "Painting",
+  "description": "Detailed artwork description...",
+  "location": {
+    "lat": 19.0760,
+    "lng": 72.8777,
+    "area": "Kala Ghoda"
+  },
+  "forSale": true,
+  "featuredartwork": "primary-artwork-image.jpg", // Image file or URL
+  "additionalImages": ["image1.jpg", "image2.jpg"] // Additional image files
+}
+```
+- **Response**: Created artwork object
+
+### Artist Management (CRUD)
+
+- **List**: `GET /admin/artists` - Paginated list with filters
+- **Create**: `POST /admin/artists` - Create new artist
+- **Get**: `GET /admin/artists/:id` - Get artist details
+- **Update**: `PUT /admin/artists/:id` - Update artist
+- **Delete**: `DELETE /admin/artists/:id` - Delete artist
+
+#### Create Artist
+
+- **URL**: `/admin/artists`
+- **Method**: `POST`
+- **Description**: Create a new artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "New Artist Name",
+  "bio": "Artist biography text...",
+  "location": {
+    "lat": 19.0596,
+    "lng": 72.8295,
+    "area": "Bandra"
+  },
+  "socialLinks": {
+    "website": "https://artistwebsite.com",
+    "instagram": "https://instagram.com/artistname",
+    "twitter": "https://twitter.com/artistname",
+    "facebook": "https://facebook.com/artistname"
+  },
+  "profileImage": "[file]" // Image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "New Artist Name",
+    "bio": "Artist biography text...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 0,
+    "createdAt": "2025-04-28T10:30:00Z",
+    "updatedAt": "2025-04-28T10:30:00Z"
+  }
+}
+```
+
+#### Update Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `PUT`
+- **Description**: Update an existing artist profile
+- **Authentication**: Required (Admin role)
+- **Request Body** (multipart/form-data):
+```json
+{
+  "name": "Updated Artist Name",
+  "bio": "Updated artist biography...",
+  "location": {
+    "lat": 19.0742,
+    "lng": 72.8858,
+    "area": "Kala Ghoda"
+  },
+  "socialLinks": {
+    "website": "https://updatedwebsite.com",
+    "instagram": "https://instagram.com/updatedname"
+  },
+  "profileImage": "[file]" // Optional: new image file upload
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Updated Artist Name",
+    "bio": "Updated artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/updated-profile.jpg",
+    "location": {
+      "lat": 19.0742,
+      "lng": 72.8858,
+      "area": "Kala Ghoda"
+    },
+    "socialLinks": {
+      "website": "https://updatedwebsite.com",
+      "instagram": "https://instagram.com/updatedname",
+      "twitter": null,
+      "facebook": null
+    },
+    "popularity": 42,
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-28T14:22:10Z"
+  }
+}
+```
+
+#### Get Artist Details (Admin)
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `GET`
+- **Description**: Get detailed information about a specific artist (admin version with additional fields)
+- **Authentication**: Required (Admin role)
+- **Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "artist123",
+    "name": "Artist Name",
+    "bio": "Artist biography...",
+    "profileImage": "https://storage.miraki-art.com/artists/artist-profile.jpg",
+    "location": {
+      "lat": 19.0596,
+      "lng": 72.8295,
+      "area": "Bandra"
+    },
+    "socialLinks": {
+      "website": "https://artistwebsite.com",
+      "instagram": "https://instagram.com/artistname",
+      "twitter": "https://twitter.com/artistname",
+      "facebook": "https://facebook.com/artistname"
+    },
+    "popularity": 42,
+    "artworks": [
+      {
+        "id": "artwork123",
+        "title": "Urban Serenity",
+        "image": "https://storage.miraki-art.com/artworks/urban-serenity.jpg",
+        "category": "Painting",
+        "price": 750,
+        "featured": true,
+        "forSale": true,
+        "createdAt": "2025-02-15T14:22:10Z"
+      },
+      {
+        "id": "artwork124",
+        "title": "Mumbai Monsoon",
+        "image": "https://storage.miraki-art.com/artworks/mumbai-monsoon.jpg",
+        "category": "Photography",
+        "price": 450,
+        "featured": false,
+        "forSale": true,
+        "createdAt": "2025-03-20T09:15:30Z"
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-04-20T16:45:12Z",
+    "stats": {
+      "totalArtworks": 12,
+      "totalSales": 4,
+      "totalRevenue": 2950,
+      "averageRating": 4.8
+    }
+  }
+}
+```
+
+#### Delete Artist
+
+- **URL**: `/admin/artists/:id`
+- **Method**: `DELETE`

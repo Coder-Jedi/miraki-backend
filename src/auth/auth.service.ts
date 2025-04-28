@@ -82,6 +82,17 @@ export class AuthService {
     };
   }
 
+  async logout(userId: string): Promise<void> {
+    // In a real-world scenario with refresh tokens, we'd invalidate tokens here
+    // Since we're using stateless JWT, we'll just update the user's lastLogout time
+    await this.userModel.updateOne(
+      { _id: userId },
+      { $set: { lastLogout: new Date() } }
+    );
+    
+    // Note: The client should also delete the JWT token from local storage
+  }
+
   async resetPasswordRequest(resetPasswordRequestDto: ResetPasswordRequestDto): Promise<void> {
     const { email } = resetPasswordRequestDto;
     

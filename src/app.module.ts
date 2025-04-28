@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module.js';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { ArtworksModule } from './artworks/artworks.module.js';
-import { ArtistsModule } from './artists/artists.module.js';
-import { CartModule } from './cart/cart.module.js';
-import { OrdersModule } from './orders/orders.module.js';
+import { ArtworksModule } from './artworks/artworks.module';
+import { ArtistsModule } from './artists/artists.module';
+import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -19,22 +19,8 @@ import { OrdersModule } from './orders/orders.module.js';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }),
-    }),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService): ThrottlerModuleOptions => ({
-        throttlers: [
-          {
-            ttl: configService.get<number>('THROTTLE_TTL', 60),
-            limit: configService.get<number>('THROTTLE_LIMIT', 60),
-          },
-        ],
       }),
     }),
     AuthModule,
@@ -43,6 +29,7 @@ import { OrdersModule } from './orders/orders.module.js';
     ArtistsModule,
     CartModule,
     OrdersModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

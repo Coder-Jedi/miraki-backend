@@ -72,6 +72,9 @@ export class User extends Document {
   @Prop({ default: Date.now })
   lastLogin: Date;
 
+  @Prop()
+  lastLogout: Date;
+
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Artwork' }] })
   favorites: string[];
 

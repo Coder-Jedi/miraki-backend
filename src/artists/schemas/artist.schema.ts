@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Location, SocialLinks } from '../../common/interfaces/common.interface';
 
 @Schema({
@@ -23,6 +23,9 @@ export class Artist extends Document {
 
   @Prop({ default: 0, min: 0, max: 5 })
   popularity: number;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Artwork' }] })
+  artworks?: MongooseSchema.Types.ObjectId[];
 }
 
 export const ArtistSchema = SchemaFactory.createForClass(Artist);

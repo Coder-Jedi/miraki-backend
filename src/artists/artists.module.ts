@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ArtistsService } from './artists.service';
 import { ArtistsController } from './artists.controller';
+import { ArtistsService } from './artists.service';
 import { Artist, ArtistSchema } from './schemas/artist.schema';
 import { Artwork, ArtworkSchema } from '../artworks/schemas/artwork.schema';
 

@@ -10,16 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
-import {
-  CreateArtistDto,
-  UpdateArtistDto,
-  ArtistFilterDto,
-  AreaCount,
-} from './dto/artist.dto';
+import { CreateArtistDto, UpdateArtistDto, ArtistFilterDto } from './dto/artist.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { UserRole } from '../common/interfaces/common.interface';
+import { UserRole, Area } from '../common/interfaces/common.interface';
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
+import { BadRequestException } from '@nestjs/common';
 
 @Controller('artists')
 export class ArtistsController {
@@ -28,15 +26,24 @@ export class ArtistsController {
   // Public endpoints
 
   @Get()
-  async findAll(@Query() filterDto: ArtistFilterDto) {
-    const result = await this.artistsService.findAll(filterDto);
-    return {
-      success: true,
-      data: {
-        artists: result.items,
-        pagination: result.pagination,
-      },
-    };
+  findAll(@Query() query: Record<string, any>) {
+    // Clean the query object by removing null, undefined, and empty string values
+    const cleanedQuery = Object.fromEntries(
+      Object.entries(query).filter(
+        ([_, value]) => value !== null && value !== undefined && value !== '',
+      ),
+    );
+
+    const dto = plainToInstance(ArtistFilterDto, cleanedQuery, {
+      enableImplicitConversion: false,
+    });
+
+    const errors = validateSync(dto);
+    if (errors.length) {
+      throw new BadRequestException(errors);
+    }
+
+    return this.artistsService.findAll(dto);
   }
 
   @Get('featured')
@@ -51,10 +58,7 @@ export class ArtistsController {
   }
 
   @Get('by-area')
-  async getArtistsByArea(): Promise<{
-    success: boolean;
-    data: { areas: AreaCount[] };
-  }> {
+  async getArtistsByArea() {
     const areas = await this.artistsService.getArtistsByArea();
     return {
       success: true,
@@ -64,6 +68,18 @@ export class ArtistsController {
     };
   }
 
+  @Get('areas')
+  async getAreas() {
+    const areas = Object.values(Area);
+    return {
+      success: true,
+      data: {
+        areas,
+      },
+    };
+  }
+
+  // Make sure this route comes AFTER all other specific routes
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const { artist, artworks } = await this.artistsService.findById(id);

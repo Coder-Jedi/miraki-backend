@@ -3,21 +3,28 @@ import {
   Get,
   Post,
   Body,
+  Put,
   Param,
   Delete,
-  Put,
   Query,
   UseGuards,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { ArtworksService } from './artworks.service';
-import { CreateArtworkDto, UpdateArtworkDto, ArtworkFilterDto } from './dto/artwork.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { UserRole } from '../common/interfaces/common.interface';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { UserRole, Area } from '../common/interfaces/common.interface';
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
+import {
+  CreateArtworkDto,
+  UpdateArtworkDto,
+  ArtworkFilterDto,
+} from './dto/artwork.dto';
 
 @Controller('artworks')
 export class ArtworksController {
@@ -26,15 +33,24 @@ export class ArtworksController {
   // Public endpoints
 
   @Get()
-  async findAll(@Query() filterDto: ArtworkFilterDto) {
-    const result = await this.artworksService.findAll(filterDto);
-    return {
-      success: true,
-      data: {
-        artworks: result.items,
-        pagination: result.pagination,
-      },
-    };
+  findAll(@Query() query: Record<string, any>) {
+    // Clean the query object by removing null, undefined, and empty string values
+    const cleanedQuery = Object.fromEntries(
+      Object.entries(query).filter(
+        ([_, value]) => value !== null && value !== undefined && value !== '',
+      ),
+    );
+
+    const dto = plainToInstance(ArtworkFilterDto, cleanedQuery, {
+      enableImplicitConversion: false, // important!
+    });
+
+    const errors = validateSync(dto);
+    if (errors.length) {
+      throw new BadRequestException(errors);
+    }
+
+    return this.artworksService.findAll(dto);
   }
 
   @Get('featured')
@@ -59,11 +75,58 @@ export class ArtworksController {
     };
   }
 
+  @Get('areas')
+  async getAreas() {
+    const areas = Object.values(Area);
+    return {
+      success: true,
+      data: {
+        areas,
+      },
+    };
+  }
+
+  @Get('artist/:artistId')
+  async findByArtist(
+    @Param('artistId') artistId: string,
+    @Query() query: Record<string, any>,
+  ) {
+    // Clean the query object by removing null, undefined, and empty string values
+    const cleanedQuery = Object.fromEntries(
+      Object.entries(query).filter(
+        ([_, value]) => value !== null && value !== undefined && value !== '',
+      ),
+    );
+
+    const dto = plainToInstance(
+      ArtworkFilterDto,
+      {
+        ...cleanedQuery,
+        artistId, // Add the artistId from the path parameter
+      },
+      {
+        enableImplicitConversion: false,
+      },
+    );
+
+    const errors = validateSync(dto);
+    if (errors.length) {
+      throw new BadRequestException(errors);
+    }
+
+    const result = await this.artworksService.findAll(dto);
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  // Make sure this route comes AFTER all other specific routes
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const artwork = await this.artworksService.findById(id);
     const relatedArtworks = await this.artworksService.findRelated(id);
-    
+
     return {
       success: true,
       data: {

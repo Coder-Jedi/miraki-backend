@@ -75,14 +75,32 @@ export class ArtistsService {
   }
 
   async findById(id: string): Promise<{ artist: Artist; artworks: Artwork[] }> {
-    const artist = await this.artistModel.findById(id);
+    const artist = await this.artistModel.findById(id).populate('artworks');
 
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
 
-    // Find artworks by this artist
-    const artworks = await this.artworkModel.find({ artistId: id });
+    // Get the artworks either from the populated artworks field or by querying
+    let artworks = [];
+    if (artist.artworks && artist.artworks.length > 0) {
+      // If artworks are already populated, use them
+      artworks = artist.artworks;
+    } else {
+      // Otherwise query for artworks by artistId
+      artworks = await this.artworkModel.find({ artistId: artist._id });
+
+      // Update the artist's artworks array if needed
+      if (
+        artworks.length > 0 &&
+        (!artist.artworks || artist.artworks.length === 0)
+      ) {
+        await this.artistModel.updateOne(
+          { _id: artist._id },
+          { $set: { artworks: artworks.map((artwork) => artwork._id) } },
+        );
+      }
+    }
 
     return { artist, artworks };
   }
@@ -102,14 +120,26 @@ export class ArtistsService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.artistModel.deleteOne({ _id: id });
+    const artist = await this.artistModel.findById(id);
 
-    if (result.deletedCount === 0) {
+    if (!artist) {
       throw new NotFoundException('Artist not found');
     }
 
-    // Also remove or update related artworks
-    await this.artworkModel.updateMany({ artistId: id }, { forSale: false });
+    // Find all artworks by this artist
+    const artworks = await this.artworkModel.find({ artistId: artist._id });
+
+    // If there are artworks, prevent deletion or handle them as appropriate
+    // For example, you might want to delete all artworks or reassign them
+    if (artworks.length > 0) {
+      // Option 1: Prevent deletion if artworks exist
+      // throw new BadRequestException('Cannot delete artist with existing artworks');
+
+      // Option 2: Delete all artworks by this artist
+      await this.artworkModel.deleteMany({ artistId: artist._id });
+    }
+
+    await this.artistModel.deleteOne({ _id: id });
   }
 
   async findFeatured(limit = 6): Promise<Artist[]> {
@@ -124,7 +154,7 @@ export class ArtistsService {
     // Group artists by area
     const areaMap = new Map<
       string,
-      { count: number; lat: number; lng: number }
+      { count: number; lat?: number; lng?: number }
     >();
 
     artists.forEach((artist) => {
@@ -139,7 +169,13 @@ export class ArtistsService {
           });
         } else {
           const existing = areaMap.get(area);
-          areaMap.set(area, { ...existing, count: existing.count + 1 });
+          areaMap.set(area, {
+            ...existing,
+            count: existing.count + 1,
+            // Only update coordinates if they exist
+            ...(artist.location.lat && { lat: artist.location.lat }),
+            ...(artist.location.lng && { lng: artist.location.lng }),
+          });
         }
       }
     });
@@ -149,8 +185,8 @@ export class ArtistsService {
       name,
       count: data.count,
       location: {
-        lat: data.lat,
-        lng: data.lng,
+        ...(data.lat && { lat: data.lat }),
+        ...(data.lng && { lng: data.lng }),
       },
     }));
   }

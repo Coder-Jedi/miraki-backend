@@ -35,7 +35,16 @@ export class ArtworksService {
       likedBy: [],
     });
 
-    return newArtwork.save();
+    // Save the artwork first to generate an ID
+    const savedArtwork = await newArtwork.save();
+
+    // Add the artwork reference to the artist's artworks array
+    await this.artistModel.updateOne(
+      { _id: artist._id },
+      { $push: { artworks: savedArtwork._id } }
+    );
+
+    return savedArtwork;
   }
 
   async findAll(
@@ -58,7 +67,7 @@ export class ArtworksService {
 
     const query = this.artworkModel.find();
 
-    // Apply filters
+    // Apply filters only when explicitly passed
     if (category && category !== ArtworkCategory.ALL) {
       query.where('category').equals(category);
     }
@@ -67,7 +76,7 @@ export class ArtworksService {
       query.where('price').gte(minPrice);
     }
 
-    if (maxPrice !== undefined) {
+    if (maxPrice !== undefined && maxPrice > 0) {
       query.where('price').lte(maxPrice);
     }
 
@@ -75,10 +84,12 @@ export class ArtworksService {
       query.where('location.area').equals(location);
     }
 
+    // Only apply featured filter if it's explicitly included in the request
     if (featured !== undefined) {
       query.where('featured').equals(featured);
     }
 
+    // Only apply forSale filter if it's explicitly included in the request
     if (forSale !== undefined) {
       query.where('forSale').equals(forSale);
     }
@@ -136,36 +147,63 @@ export class ArtworksService {
     id: string,
     updateArtworkDto: UpdateArtworkDto,
   ): Promise<Artwork> {
-    // If artistId is updated, find the new artist
-    if (updateArtworkDto.artistId) {
-      const artist = await this.artistModel.findById(updateArtworkDto.artistId);
+    const artwork = await this.artworkModel.findById(id);
+    
+    if (!artwork) {
+      throw new NotFoundException('Artwork not found');
+    }
+    
+    // If artistId is updated, update the relations
+    if (updateArtworkDto.artistId && updateArtworkDto.artistId !== artwork.artistId.toString()) {
+      // Find the new artist
+      const newArtist = await this.artistModel.findById(updateArtworkDto.artistId);
 
-      if (!artist) {
+      if (!newArtist) {
         throw new NotFoundException('Artist not found');
       }
 
-      updateArtworkDto['artist'] = artist.name;
+      // Remove artwork from old artist's artworks array
+      await this.artistModel.updateOne(
+        { _id: artwork.artistId },
+        { $pull: { artworks: artwork._id } }
+      );
+
+      // Add artwork to new artist's artworks array
+      await this.artistModel.updateOne(
+        { _id: newArtist._id },
+        { $push: { artworks: artwork._id } }
+      );
+
+      // Update the artist name in the artwork
+      updateArtworkDto['artist'] = newArtist.name;
     }
 
-    const artwork = await this.artworkModel.findByIdAndUpdate(
+    // Update the artwork
+    const updatedArtwork = await this.artworkModel.findByIdAndUpdate(
       id,
       updateArtworkDto,
       { new: true },
     );
 
-    if (!artwork) {
-      throw new NotFoundException('Artwork not found');
-    }
-
-    return artwork;
+    return updatedArtwork;
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.artworkModel.deleteOne({ _id: id });
-
-    if (result.deletedCount === 0) {
+    // Find the artwork to get the artistId
+    const artwork = await this.artworkModel.findById(id);
+    
+    if (!artwork) {
       throw new NotFoundException('Artwork not found');
     }
+    
+    // Remove the artwork reference from the artist's artworks array
+    await this.artistModel.updateOne(
+      { _id: artwork.artistId },
+      { $pull: { artworks: artwork._id } }
+    );
+
+    // Delete the artwork
+    await this.artworkModel.deleteOne({ _id: id });
   }
 
   async findFeatured(limit = 6): Promise<Artwork[]> {

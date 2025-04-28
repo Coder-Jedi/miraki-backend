@@ -17,6 +17,23 @@ export enum ArtworkCategory {
   OTHER = 'Other',
 }
 
+export enum Area {
+  BANDRA = 'Bandra',
+  KALA_GHODA = 'Kala Ghoda',
+  COLABA = 'Colaba',
+  WORLI = 'Worli',
+  FORT = 'Fort',
+  JUHU = 'Juhu',
+  ANDHERI = 'Andheri',
+  POWAI = 'Powai',
+  DADAR = 'Dadar',
+  LOWER_PAREL = 'Lower Parel',
+  SANTACRUZ = 'Santacruz',
+  CHEMBUR = 'Chembur',
+  VERSOVA = 'Versova',
+  OTHER = 'Other',
+}
+
 export enum AddressType {
   HOME = 'home',
   OFFICE = 'office',
@@ -46,10 +63,9 @@ export enum PaymentMethod {
 }
 
 export interface Location {
-  lat: number;
-  lng: number;
-  address: string;
-  area?: string;
+  lat?: number;
+  lng?: number;
+  area: string;
 }
 
 export interface PaginationParams {

@@ -18,7 +18,7 @@ export class Artwork extends Document {
   @Prop({ required: true })
   year: number;
 
-  @Prop({ required: true })
+  @Prop()
   medium: string;
 
   @Prop()
