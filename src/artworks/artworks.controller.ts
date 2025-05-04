@@ -33,7 +33,7 @@ export class ArtworksController {
   // Public endpoints
 
   @Get()
-  findAll(@Query() query: Record<string, any>) {
+  async findAll(@Query() query: Record<string, any>) {
     // Clean the query object by removing null, undefined, and empty string values
     const cleanedQuery = Object.fromEntries(
       Object.entries(query).filter(
@@ -50,7 +50,11 @@ export class ArtworksController {
       throw new BadRequestException(errors);
     }
 
-    return this.artworksService.findAll(dto);
+    const paginatedArtworks = await this.artworksService.findAll(dto);
+    return {
+      success: true,
+      data: paginatedArtworks,
+    };
   }
 
   @Get('featured')

@@ -24,6 +24,9 @@ export class Artist extends Document {
   @Prop({ default: 0, min: 0, max: 5 })
   popularity: number;
 
+  @Prop({ default: false })
+  featured: boolean;
+
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Artwork' }] })
   artworks?: MongooseSchema.Types.ObjectId[];
 }

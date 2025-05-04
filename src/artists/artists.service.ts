@@ -29,6 +29,7 @@ export class ArtistsService {
       limit = 20,
       search,
       location,
+      featured,
       sortBy = 'popularity',
       sortOrder = 'desc',
     } = filterDto;
@@ -47,6 +48,10 @@ export class ArtistsService {
 
     if (location) {
       query.where('location.area').equals(location);
+    }
+    
+    if (featured !== undefined) {
+      query.where('featured').equals(featured);
     }
 
     // Apply sorting
@@ -143,7 +148,11 @@ export class ArtistsService {
   }
 
   async findFeatured(limit = 6): Promise<Artist[]> {
-    return this.artistModel.find().sort({ popularity: -1 }).limit(limit).exec();
+    return this.artistModel
+      .find({ featured: true })
+      .sort({ popularity: -1 })
+      .limit(limit)
+      .exec();
   }
 
   async getArtistsByArea(): Promise<AreaCount[]> {

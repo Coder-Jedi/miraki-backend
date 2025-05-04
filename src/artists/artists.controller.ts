@@ -26,7 +26,7 @@ export class ArtistsController {
   // Public endpoints
 
   @Get()
-  findAll(@Query() query: Record<string, any>) {
+  async findAll(@Query() query: Record<string, any>) {
     // Clean the query object by removing null, undefined, and empty string values
     const cleanedQuery = Object.fromEntries(
       Object.entries(query).filter(
@@ -43,7 +43,12 @@ export class ArtistsController {
       throw new BadRequestException(errors);
     }
 
-    return this.artistsService.findAll(dto);
+    const paginatedArtists = await this.artistsService.findAll(dto);
+
+    return {
+      success: true,
+      data: paginatedArtists,
+    };
   }
 
   @Get('featured')
@@ -116,6 +121,26 @@ export class ArtistsController {
     return {
       success: true,
       data: artist,
+    };
+  }
+
+  @Put(':id/toggle-featured')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async toggleFeatured(@Param('id') id: string) {
+    const artist = await this.artistsService.findById(id);
+    const updateDto: UpdateArtistDto = {
+      featured: !artist.artist.featured,
+    };
+    
+    const updated = await this.artistsService.update(id, updateDto);
+    
+    return {
+      success: true,
+      data: {
+        id: updated._id,
+        featured: updated.featured,
+      },
     };
   }
 

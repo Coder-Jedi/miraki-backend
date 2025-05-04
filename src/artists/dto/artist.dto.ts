@@ -7,6 +7,7 @@ import {
   Min,
   Max,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { LocationDto } from '../../artworks/dto/artwork.dto';
@@ -20,6 +21,13 @@ function transformNumber({ value }) {
   if (value === undefined || value === null || value === '') return undefined;
   const num = Number(value);
   return isNaN(num) ? undefined : num;
+}
+
+function transformBoolean({ value }) {
+  if (value === undefined || value === null || value === '') return undefined;
+  if (value === 'true' || value === '1' || value === true) return true;
+  if (value === 'false' || value === '0' || value === false) return false;
+  return undefined;
 }
 
 // Export the AreaCount interface for use in controller
@@ -78,6 +86,10 @@ export class CreateArtistDto {
   @Min(0)
   @Max(5)
   popularity?: number = 0;
+
+  @IsOptional()
+  @IsBoolean()
+  featured?: boolean = false;
 }
 
 export class UpdateArtistDto {
@@ -109,6 +121,10 @@ export class UpdateArtistDto {
   @Min(0)
   @Max(5)
   popularity?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  featured?: boolean;
 }
 
 export class ArtistFilterDto {
@@ -138,6 +154,11 @@ export class ArtistFilterDto {
   @Transform(toUndefinedIfEmpty)
   @IsString()
   location?: string;
+
+  @IsOptional()
+  @Transform(transformBoolean)
+  @IsBoolean()
+  featured?: boolean;
 
   @IsOptional()
   @Transform(toUndefinedIfEmpty)

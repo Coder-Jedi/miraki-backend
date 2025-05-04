@@ -370,7 +370,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/artists?page=1&limit=20&area=Bandra&search=contemporary&sortBy=popularity&sortOrder=desc",
+							"raw": "{{baseUrl}}/artists?page=1&limit=20&area=Bandra&search=contemporary&featured=true&sortBy=popularity&sortOrder=desc",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -393,6 +393,10 @@
 								{
 									"key": "search",
 									"value": "contemporary"
+								},
+								{
+									"key": "featured",
+									"value": "true"
 								},
 								{
 									"key": "sortBy",
@@ -485,6 +489,30 @@
 						"description": "Get a list of all supported artist areas in Mumbai"
 					},
 					"response": []
+				},
+				{
+					"name": "Toggle Featured (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/artists/{{artistId}}/toggle-featured",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"artists",
+								"{{artistId}}",
+								"toggle-featured"
+							]
+						},
+						"description": "Toggle the featured status of an artist (Admin role required)"
+					}
 				}
 			]
 		},
